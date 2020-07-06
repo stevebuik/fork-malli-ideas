@@ -1,0 +1,11 @@
+(ns devcards
+  (:require [cljs.pprint :refer [pprint]]
+            [devcards.util.markdown]
+            [devcards.core :refer [start-devcard-ui!]
+             :refer-macros [defcard defcard-doc deftest dom-node reagent]]
+            ))
+
+(enable-console-print!)
+
+(defn ^:export init []
+  (start-devcard-ui!))

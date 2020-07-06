@@ -1,0 +1,9 @@
+{:deps    {fork          {:mvn/version "2.0.0"}
+           re-frame      {:mvn/version "0.12.0"}
+           reagent       {:mvn/version "0.10.0" :exclusions [cljsjs/react-dom-server cljsjs/react-dom cljsjs/react]}
+           metosin/malli {:git/url "https://github.com/metosin/malli.git"
+                          :sha     "a992edec3fbb69988067eb3330b48313fb17c497"}}
+ :aliases {:dev {:extra-paths ["dev"]
+                 :extra-deps  {binaryage/devtools   {:mvn/version "1.0.2"} ; automatically added as a pre-load by shadow-cljs https://shadow-cljs.github.io/docs/UsersGuide.html#_preloads
+                               devcards             {:mvn/version "0.2.7" :exclusions [cljsjs/create-react-class]}
+                               thheller/shadow-cljs {:mvn/version "2.9.10"}}}}}
