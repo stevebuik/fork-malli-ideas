@@ -39,7 +39,7 @@
   [:p (values "name")])
 
 (defn multi-row-form
-  "HOF returning a fork compatible fn providing a form with an (optional) header and N x M inputs in rows.
+  "HOF returning a Fork compatible fn providing a form with an (optional) header and N x M inputs in rows.
    css classes can be provided for the form and row inputs"
   [{:keys [header] :as config}]
   (fn [{:keys [values errors] :as fopts}]
