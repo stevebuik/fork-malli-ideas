@@ -2,17 +2,16 @@
 
  :nrepl  {:port 8500}                                       ; avoid conflicts
 
- :builds {:devcards {:target     :browser
+ :builds {:devcards {:target           :browser
 
-                     :output-dir "public/devcards-js"
-                     :asset-path "/devcards-js"
+                     :output-dir       "public/devcards-js"
+                     :asset-path       "/devcards-js"
 
-                     :js-options {:resolve {"devcards-marked"             {:target :npm :require "marked"}
-                                            "devcards-syntax-highlighter" {:target :npm :require "syntax-highlighter"}}}
+                     :compiler-options {:devcards true}
 
-                     :modules    {:main {:init-fn devcards/init}}
-                     :devtools   {:http-root "public"
-                                  :http-port 8001}
-                     :dev        {:compiler-options {:devcards      true
-                                                     :optimizations :none}}}
-          }}
+                     :js-options       {:resolve {"devcards-marked"             {:target :npm :require "marked"}
+                                                  "devcards-syntax-highlighter" {:target :npm :require "syntax-highlighter"}}}
+
+                     :modules          {:main {:init-fn devcards/init}}
+                     :devtools         {:http-root "public"
+                                        :http-port 8001}}}}
