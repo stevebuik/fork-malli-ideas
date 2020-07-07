@@ -2,11 +2,12 @@
   (:require [malli.core :as m]
             [malli.error :as me]))
 
-(defn validator
+(defn validator-for-humans
+  "HOF returning a Fork compatible validation fn from a schema."
+  ; TODO The schema is transformed into a Malli validator for best performance. Can this work with explain/humanize?
   [schema]
   (fn [v]
     (->> v
-         ; TODO use m/validator to force compile time eval. orders of mag faster!
          (m/explain schema)
          me/humanize)))
 
