@@ -18,6 +18,7 @@
               [:div {:style {:margin-bottom 30}}
 
                [:p "Basic form: both fields have validation. try clearing the name or changing the location"]
+               [:p "The :header component can display data from local state (as opposed to app-db/subs)"]
                [:p [:span "Validation is "]
                 [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/app.cljs#L12"
                      :target "source"}
