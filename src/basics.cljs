@@ -35,7 +35,7 @@
                [:p "Basic form: both fields have validation. try clearing the name or changing the location"]
 
                [:div {:style {:border  "1px solid lightgrey"
-                              :padding 20}}
+                              :padding "0 0 20px 20px"}}
                 [fork/form {:initial-values (:record1 @re-frame-sub)
                             :validation     (core/validator-for-humans [:map
                                                                         ["name" [:string {:min 2 :max 50}]]
@@ -67,7 +67,7 @@
                  "Load Lucio"]]
 
                [:div {:style {:border  "1px solid lightgrey"
-                              :padding 20}}
+                              :padding "0 0 20px 20px"}}
                 [fork/form {:initial-values (get @re-frame-sub (:editing @re-frame-sub))
                             :validation     (core/validator-for-humans [:map
                                                                         ["name" [:string {:min 2 :max 50}]]
