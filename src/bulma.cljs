@@ -35,7 +35,8 @@
 
                [:p
                 [:span "Important: to load the Bulma css "]
-                [:a {:href "/index-bulma.html#!/bulma"} "click here"]]
+                [:a {:href "/index-bulma.html#!/bulma"} "click here"]
+                [:span " (currently only works on localhost)"]]
 
                [form-in-container
                 (core/validator-for-humans app/malli-schema)
