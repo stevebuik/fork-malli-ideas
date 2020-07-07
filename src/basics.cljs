@@ -40,7 +40,7 @@
 
                [:p "Demo of loading different values into a form. Solution was not obvious initially."]
                [:p [:span "The footer fn can use the Fork handler fns. In this case, "]
-                [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/basics.cljs#L80"
+                [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/basics.cljs#L53"
                      :target "source"} "the 'reset' handler."]]
                [:p "Each form has its own local state i.e. form above is unaffected by changes to the app-db/sub"]
 
