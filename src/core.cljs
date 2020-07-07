@@ -18,12 +18,13 @@
   (when (seq errors)
     [:div.errors {}
      (map-indexed (fn [i e]
-                    [:p.error {:key (str "error-" i)} e])
+                    [:p.error {:style {:color "red"}
+                               :key   (str "error-" i)} e])
                   errors)]))
 
 (defn fork-input
   "return a form input, dispatching on the type value in the config arg"
-  [{:keys [values handle-change handle-blur] :as fork-fns}
+  [{:keys [values handle-change handle-blur] :as props}
    {:keys [type field-name place-holder] :as config}]
   (case type
     "text" [:input {:id          field-name
@@ -41,13 +42,13 @@
   [:p (values "name")])
 
 (defn multi-row-form
-  "HOF returning a Fork compatible fn providing a form with an (optional) header and N x M inputs in rows.
+  "HOF returning a Fork compatible fn providing a form with an (optional) headers, footers and N x M inputs in rows.
    css classes can be provided for the form and row inputs"
   [{:keys [header footer] :as config}]
-  (fn [{:keys [errors] :as fopts}]
+  (fn [{:keys [errors] :as props}]
     [:div
      (when header
-       [header fopts])
+       [header props])
      (let [{:keys [form-class inner-class input-rows]} config]
        [:form {:class form-class}
         [:div {:class inner-class}
@@ -58,11 +59,11 @@
                                    :class class}
                              [:label {:for field-name}
                               [:span label]]
-                             (fork-input fopts config)
+                             (fork-input props config)
                              (input-errors (get errors field-name))])
                           inputs)))]])
      (when footer
-       [footer fopts])]))
+       [footer props])]))
 
 
 
