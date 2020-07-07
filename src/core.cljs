@@ -1,6 +1,7 @@
 (ns core
   (:require [malli.core :as m]
-            [malli.error :as me]))
+            [malli.error :as me]
+            [reagent.core :as r]))
 
 (defn validator-for-humans
   "HOF returning a Fork compatible validation fn from a schema."
@@ -36,17 +37,17 @@
 
 (defn form-header
   "a component that displays the latest Fork form state, even when invalid"
-  [values]
+  [{:keys [values]}]
   [:p (values "name")])
 
 (defn multi-row-form
   "HOF returning a Fork compatible fn providing a form with an (optional) header and N x M inputs in rows.
    css classes can be provided for the form and row inputs"
-  [{:keys [header] :as config}]
-  (fn [{:keys [values errors] :as fopts}]
+  [{:keys [header footer] :as config}]
+  (fn [{:keys [errors] :as fopts}]
     [:div
      (when header
-       [header values])
+       [header fopts])
      (let [{:keys [form-class inner-class input-rows]} config]
        [:form {:class form-class}
         [:div {:class inner-class}
@@ -59,7 +60,9 @@
                               [:span label]]
                              (fork-input fopts config)
                              (input-errors (get errors field-name))])
-                          inputs)))]])]))
+                          inputs)))]])
+     (when footer
+       [footer fopts])]))
 
 
 
