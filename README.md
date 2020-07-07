@@ -1,6 +1,6 @@
 # Using Fork and Malli in Re-Frame
 
-Live demo at https://stevebuik.github.io/fork-malli-ideas
+Live demo at https://stevebuik.github.io/fork-malli-ideas/#!/readme
 
 ## Local Development
 
