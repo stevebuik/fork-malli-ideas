@@ -40,6 +40,25 @@
             app/app-db
             {:inspect-data false})
 
+(defcard-rg value-coercion
+            (fn [re-frame-sub _]
+              [:div {:style {:margin-bottom 30}}
+
+               [:p "Coercion of integer values from 'number' inputs. Try making the follower count negative or a alpha-numeric"]
+
+               [form-in-container
+                app/form-config2
+                (core/validator-for-humans app/malli-schema)
+                (->> (:editing @re-frame-sub)
+                     (get @re-frame-sub)
+                     core/fork-map)]
+
+               [app/questions "coercion"
+                "how to compose the 2 Malli transforms using mt/transform?"
+                ]])
+            app/app-db
+            {:inspect-data false})
+
 (defcard-rg switching-records
             (fn [re-frame-sub _]
               [:div {:style {:margin-bottom 30}}

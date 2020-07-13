@@ -7,12 +7,9 @@
   "HOF returning a Fork compatible validation fn from a schema."
   [schema]
   (fn [v]
-    (->> (mt/transformer
-           ; coerce values from text fields if required
-           mt/string-transformer
-           ; coerce keys back to idiomatic keywords
-           (mt/key-transformer {:decode keyword}))
-         (m/decode schema v)
+    (->> (mt/key-transformer {:decode keyword})
+         (m/decode schema v)                                ; transform keys back to keywords
+         (#(m/decode app/malli-schema % mt/string-transformer)) ; transform string values to schema types
          ; validate using keyword based schemas
          (m/explain schema)
          ; make readable form messages
@@ -33,14 +30,14 @@
   [{:keys [values handle-change handle-blur] :as props}
    {:keys [type field-name place-holder] :as config}]
   (case type
-    "text" [:input {:id          field-name
-                    :type        type
-                    :class       ""
-                    :name        field-name
-                    :value       (values field-name)
-                    :placeholder place-holder
-                    :on-change   handle-change
-                    :on-blur     handle-blur}]))
+    ("text" "number") [:input {:id          field-name
+                               :type        type
+                               :class       ""
+                               :name        field-name
+                               :value       (values field-name)
+                               :placeholder place-holder
+                               :on-change   handle-change
+                               :on-blur     handle-blur}]))
 
 (defn fork-map
   "return a map with all keys as strings, following the design suggested by Fork"
