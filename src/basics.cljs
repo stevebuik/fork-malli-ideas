@@ -54,7 +54,10 @@
                      core/fork-map)]
 
                [app/questions "coercion"
-                "how to compose the 2 Malli transforms using mt/transform?"
+                [:div [:span "how to compose the "]
+                 [:a {:href "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/core.cljs#L11-L12"}
+                  "2 Malli transforms"]
+                 [:span " using mt/transform?"]]
                 ]])
             app/app-db
             {:inspect-data false})
