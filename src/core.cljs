@@ -1,15 +1,21 @@
 (ns core
   (:require [malli.core :as m]
             [malli.error :as me]
-            [reagent.core :as r]))
+            [malli.transform :as mt]))
 
 (defn validator-for-humans
   "HOF returning a Fork compatible validation fn from a schema."
-  ; TODO The schema is transformed into a Malli validator for best performance. Can this work with explain/humanize?
   [schema]
   (fn [v]
-    (->> v
+    (->> (mt/transformer
+           ; coerce values from text fields if required
+           mt/string-transformer
+           ; coerce keys back to idiomatic keywords
+           (mt/key-transformer {:decode keyword}))
+         (m/decode schema v)
+         ; validate using keyword based schemas
          (m/explain schema)
+         ; make readable form messages
          me/humanize)))
 
 (defn input-errors
@@ -36,6 +42,14 @@
                     :on-change   handle-change
                     :on-blur     handle-blur}]))
 
+(defn fork-map
+  "return a map with all keys as strings, following the design suggested by Fork"
+  [value]
+  (reduce-kv (fn [m k v]
+               (assoc m (name k) v))
+             {}
+             value))
+
 (defn form-header
   "a component that displays the latest Fork form state, even when invalid"
   [{:keys [values]}]
@@ -60,7 +74,9 @@
                              [:label {:for field-name}
                               [:span label]]
                              (fork-input props config)
-                             (input-errors (get errors field-name))])
+                             (->> (keyword field-name)      ; Malli errors use keywords
+                                  (get errors)
+                                  input-errors)])
                           inputs)))]])
      (when footer
        [footer props])]))

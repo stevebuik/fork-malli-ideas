@@ -2,17 +2,21 @@
   (:require [reagent.core :as r]))
 
 (defonce app-db (r/atom {:editing :record1
-                         :record1 {"id"       "1234"
-                                   "name"     "Lucio"
-                                   "location" "London"}
-                         :record2 {"id"       "5678"
-                                   "name"     "Tommi"
-                                   "location" "Tampere"}}))
+                         :record1 {:id               "1234"
+                                   :name             "Lucio"
+                                   :location         "London"
+                                   :github-followers 18}
+                         :record2 {:id               "5678"
+                                   :name             "Tommi"
+                                   :location         "Tampere"
+                                   :github-followers 153}}))
 
+; notice schemas use keywords, even though Fork forms use string keys
 (def malli-schema [:map
-                   ["name" [:string {:min 2 :max 50}]]
-                   ["location" [:enum {:error/message "Must be London or Tampere"}
-                                "London" "Tampere"]]])
+                   [:id :string]
+                   [:name [:string {:min 2 :max 50}]]
+                   [:location [:enum {:error/message "Must be London or Tampere"}
+                               "London" "Tampere"]]])
 
 (defn questions
   [loc & qs]
@@ -26,7 +30,7 @@
 (def form-config {:form-class  ""
                   :inner-class ""
                   :input-rows  [{:inputs [{:type         "text"
-                                           :field-name   "name"
+                                           :field-name   "name" ; string keys (see Fork docs)
                                            :place-holder "Enter name"
                                            :label        "Name"}]
                                  :class  ""}

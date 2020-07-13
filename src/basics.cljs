@@ -6,6 +6,7 @@
             [fork.re-frame :as fork]))
 
 (defn form-in-container
+  "return a fork form inside a box with a border"
   [config validator initial-values]
   [:div {:style {:border  "1px solid lightgrey"
                  :padding "0 0 20px 20px"}}
@@ -22,13 +23,17 @@
                [:p [:span "Validation is "]
                 [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/app.cljs#L12"
                      :target "source"}
-                 "defined here"]]
+                 "defined here."]
+                [:span " The Malli schemas can use idiomatic keywords even though Fork maps use String keys.
+                This is because the validation fn in this project used Malli 'Value Transformation' to translate the keys
+                and use the intended map shapes for both libraries."]]
 
                [form-in-container
-                (-> app/form-config
-                    (assoc :header core/form-header))
+                (assoc app/form-config :header core/form-header)
                 (core/validator-for-humans app/malli-schema)
-                (get @re-frame-sub (:editing @re-frame-sub))]
+                (->> (:editing @re-frame-sub)
+                     (get @re-frame-sub)
+                     core/fork-map)]
 
                [app/questions "simple"
                 "can the validation fn be pre-compiled and still used with m/explain?"]])
@@ -51,18 +56,18 @@
                         :footer (fn [{:keys [reset]}]
                                   [:div {:style {:margin-bottom "1rem"}}
                                    [:button {:onClick (fn [_]
-                                                        (reset {:values  (:record2 @re-frame-sub)
+                                                        (reset {:values  (core/fork-map (:record2 @re-frame-sub))
                                                                 :touched #{}})
                                                         (swap! app/app-db assoc :editing :record2))}
                                     "Load Tommi"]
                                    [:button {:onClick (fn [_]
-                                                        (reset {:values  (:record1 @re-frame-sub)
+                                                        (reset {:values  (core/fork-map (:record1 @re-frame-sub))
                                                                 :touched #{}})
                                                         (swap! app/app-db assoc :editing :record1))}
                                     "Load Lucio"]])})
                 (core/validator-for-humans app/malli-schema)
-                (get @re-frame-sub (:editing @re-frame-sub))]
-
-               ])
+                (->> (:editing @re-frame-sub)
+                     (get @re-frame-sub)
+                     core/fork-map)]])
             app/app-db
             {:inspect-data true})
