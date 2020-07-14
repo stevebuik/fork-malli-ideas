@@ -21,7 +21,7 @@
                [:p "Basic form: both fields have validation. try clearing the name or changing the location"]
                [:p "The :header component can display data from local state (as opposed to app-db/subs)"]
                [:p [:span "Validation is "]
-                [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/app.cljs#L12"
+                [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/app.cljs#L15-L20"
                      :target "source"}
                  "defined here."]
                 [:span " The Malli schemas can use idiomatic keywords even though Fork maps use String keys.
@@ -62,7 +62,7 @@
 
                [:p "Demo of loading different values into a form. Solution was not obvious initially."]
                [:p [:span "The footer fn can use the Fork handler fns. In this case, "]
-                [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/basics.cljs#L53"
+                [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/basics.cljs#L74-L83"
                      :target "source"} "the 'reset' handler."]]
                [:p "Each form has its own local state i.e. form above is unaffected by changes to the app-db/sub"]
 
