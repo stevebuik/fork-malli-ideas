@@ -7,9 +7,11 @@
   "HOF returning a Fork compatible validation fn from a schema."
   [schema]
   (fn [v]
-    (->> (mt/key-transformer {:decode keyword})
-         (m/decode schema v)                                ; transform keys back to keywords
-         (#(m/decode app/malli-schema % mt/string-transformer)) ; transform string values to schema types
+    (->> (mt/transformer
+           (mt/key-transformer {:decode keyword})           ; keys back to keywords
+           mt/string-transformer                            ; and strings from inputs back to integers
+           )
+         (m/decode schema v)                                ; coerce using transforms above
          ; validate using keyword based schemas
          (m/explain schema)
          ; make readable form messages
