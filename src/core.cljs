@@ -7,15 +7,18 @@
   "HOF returning a Fork compatible validation fn from a schema."
   [schema]
   (fn [v]
-    (->> (mt/transformer
-           (mt/key-transformer {:decode keyword})           ; keys back to keywords
-           mt/string-transformer                            ; and strings from inputs back to integers
-           )
-         (m/decode schema v)                                ; coerce using transforms above
-         ; validate using keyword based schemas
-         (m/explain schema)
-         ; make readable form messages
-         me/humanize)))
+    (let [; define chain of Malli transform from Fork/form data back to clj maps
+          transforms (mt/transformer
+                       (mt/key-transformer {:decode keyword}) ; keys back to keywords
+                       mt/string-transformer                ; and strings from inputs back to integers
+                       )
+          ; pre-compile schema for best performance
+          explain (m/explainer schema)]
+      (->> (m/decode schema v transforms)                   ; coerce using transforms above
+           ; validate using keyword based schema
+           explain
+           ; return a map of error messages suitable for human UIs
+           me/humanize))))
 
 (defn input-errors
   "display a seq of errors"

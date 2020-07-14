@@ -35,8 +35,7 @@
                      (get @re-frame-sub)
                      core/fork-map)]
 
-               [app/questions "simple"
-                "can the validation fn be pre-compiled and still used with m/explain?"]])
+               ])
             app/app-db
             {:inspect-data false})
 
@@ -44,7 +43,7 @@
             (fn [re-frame-sub _]
               [:div {:style {:margin-bottom 30}}
 
-               [:p "Coercion of integer values from 'number' inputs. Try making the follower count negative or a alpha-numeric"]
+               [:p "Coercion of integer values from 'number' inputs. The input returns a string value but the schema expects an integer. Try making the follower count negative or a alpha-numeric"]
 
                [form-in-container
                 app/form-config2
