@@ -22,12 +22,13 @@
   switching-records-via-subscription
   (fn [re-frame-sub _]
     (let [{:keys [editing] :as sub-data} @re-frame-sub
-          person (get sub-data editing)]
+          subscribed-person (get sub-data editing)]
 
       [:div {:style {:margin-bottom 30}}
 
        [:p "Simulate using Fork and Malli in a re-frame env with circular data flowing"]
        [:p "Fork local state visible above the form, re-frame app-db/global state is below"]
+       [:p "Load re-frame subscribed records into the form using the buttons below"]
        [:p "When you edit the input value:"]
        [:ol
         [:li "it instantly updates the form local state"]
@@ -44,8 +45,30 @@
                                   :label                 "Name"
                                   :global-change-handler update-reframe-app-db}]
                         :class  ""}]
-         :header      core/form-header}
+         :header      (fn
+                        ; NOTE: this is poor design i.e. handles change detection and UI rendering
+                        ; it's a hack to illustrate the combination of re-frame and fork-local state and issues that arise
+                        [{:keys [values reset]}]
+
+                        (when (not= (:id subscribed-person)
+                                    (get values "id"))
+                          (reset {:values  (core/fork-map subscribed-person)
+                                  :touched #{}}))
+
+                        [:p (values "name")])}
         (core/validator-for-humans app/malli-schema)
-        (core/fork-map person)]]))
+        (core/fork-map subscribed-person)]
+
+       ; external re-frame controls causing sub changes to flow into the fork form
+       [:div {:style {:margin-bottom "1rem"}}
+        [:p "events from re-frame app"]
+        [:button {:onClick (fn [_]
+                             (rf/dispatch [::switch :record2]))}
+         "Load Tommi"]
+        [:button {:onClick (fn [_]
+                             (rf/dispatch [::switch :record1]))}
+         "Load Lucio"]]
+
+       ]))
   app/app-db
   {:inspect-data true})

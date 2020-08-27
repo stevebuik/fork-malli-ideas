@@ -1,5 +1,4 @@
-(ns user
-  (:require [shadow.cljs.devtools.api :as shadow]))
+(ns user)
 
 (comment
 
