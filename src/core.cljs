@@ -34,29 +34,26 @@
 
 (defn fork-input
   "return a form input, dispatching on the type value in the config arg"
-  [{:keys [values handle-change handle-blur send-server-request] :as fork-form-data}
+  [{:keys [values handle-change handle-blur send-server-request]}
    {:keys [type field-name place-holder global-change-handler]}]
-  (let [fire-server-event (fn []
-                            (send-server-request
-                              {:name     field-name
-                               :debounce 1000}
-                              (fn update-gql-field
-                                [fork-form-data]
-                                (when (and (nil? (:errors fork-form-data))
-                                           (seq (:dirty fork-form-data)))
-                                  (global-change-handler fork-form-data)))))]
-    (case type
-      ("text" "number") [:input {:id          field-name
-                                 :type        type
-                                 :class       ""
-                                 :name        field-name
-                                 :value       (values field-name)
-                                 :placeholder place-holder
-                                 :on-change   (fn [event]
-                                                (handle-change event)
-                                                (when global-change-handler
-                                                  (fire-server-event)))
-                                 :on-blur     handle-blur}])))
+  (case type
+    ("text" "number") [:input {:id          field-name
+                               :type        type
+                               :class       ""
+                               :name        field-name
+                               :value       (values field-name)
+                               :placeholder place-holder
+                               :on-change   (fn [event]
+                                              (handle-change event)
+                                              (when global-change-handler
+                                                (send-server-request
+                                                  {:name     field-name
+                                                   :debounce 1000}
+                                                  (fn [fork-form-data]
+                                                    (when (and (nil? (:errors fork-form-data))
+                                                               (seq (:dirty fork-form-data)))
+                                                      (global-change-handler fork-form-data))))))
+                               :on-blur     handle-blur}]))
 
 (defn fork-map
   "return a map with all keys as strings, following the design suggested by Fork"
