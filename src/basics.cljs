@@ -1,18 +1,8 @@
 (ns basics
   (:require [cljs.pprint :refer [pprint]]
             [devcards.core :refer-macros [defcard defcard-rg]]
-            [core]
-            [app]
-            [fork.re-frame :as fork]))
-
-(defn form-in-container
-  "return a fork form inside a box with a border"
-  [config validator initial-values]
-  [:div {:style {:border  "1px solid lightgrey"
-                 :padding "0 0 20px 20px"}}
-   [fork/form {:initial-values initial-values
-               :validation     validator}
-    (core/multi-row-form config)]])
+            [core :refer [form-in-container]]
+            [app]))
 
 (defcard-rg simple-validations
             (fn [re-frame-sub _]
@@ -64,6 +54,7 @@
                [:p [:span "The footer fn can use the Fork handler fns. In this case, "]
                 [:a {:href   "https://github.com/stevebuik/fork-malli-ideas/blob/master/src/basics.cljs#L74-L83"
                      :target "source"} "the 'reset' handler."]]
+               [:p "This switch (using reset) behaviour could be replaced with the re-frame sub design, similar to the re-frame devcard example"]
                [:p "Each form has its own local state i.e. form above is unaffected by changes to the app-db/sub"]
 
                [form-in-container

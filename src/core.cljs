@@ -1,20 +1,22 @@
 (ns core
   (:require [malli.core :as m]
             [malli.error :as me]
-            [malli.transform :as mt]))
+            [malli.transform :as mt]
+            [fork.re-frame :as fork]))
+
+; define chain of Malli transform from Fork/form data back to clj maps
+(def malli-transforms (mt/transformer
+                        (mt/key-transformer {:decode keyword}) ; keys back to keywords
+                        mt/string-transformer               ; and strings from inputs back to integers
+                        ))
 
 (defn validator-for-humans
   "HOF returning a Fork compatible validation fn from a schema."
   [schema]
   (fn [v]
-    (let [; define chain of Malli transform from Fork/form data back to clj maps
-          transforms (mt/transformer
-                       (mt/key-transformer {:decode keyword}) ; keys back to keywords
-                       mt/string-transformer                ; and strings from inputs back to integers
-                       )
-          ; pre-compile schema for best performance
+    (let [; pre-compile schema for best performance
           explain (m/explainer schema)]
-      (->> (m/decode schema v transforms)                   ; coerce using transforms above
+      (->> (m/decode schema v malli-transforms)             ; coerce using transforms above
            ; validate using keyword based schema
            explain
            ; return a map of error messages suitable for human UIs
@@ -32,17 +34,29 @@
 
 (defn fork-input
   "return a form input, dispatching on the type value in the config arg"
-  [{:keys [values handle-change handle-blur] :as props}
-   {:keys [type field-name place-holder] :as config}]
-  (case type
-    ("text" "number") [:input {:id          field-name
-                               :type        type
-                               :class       ""
-                               :name        field-name
-                               :value       (values field-name)
-                               :placeholder place-holder
-                               :on-change   handle-change
-                               :on-blur     handle-blur}]))
+  [{:keys [values handle-change handle-blur send-server-request] :as fork-form-data}
+   {:keys [type field-name place-holder global-change-handler]}]
+  (let [fire-server-event (fn []
+                            (send-server-request
+                              {:name     field-name
+                               :debounce 1000}
+                              (fn update-gql-field
+                                [fork-form-data]
+                                (when (and (nil? (:errors fork-form-data))
+                                           (seq (:dirty fork-form-data)))
+                                  (global-change-handler fork-form-data)))))]
+    (case type
+      ("text" "number") [:input {:id          field-name
+                                 :type        type
+                                 :class       ""
+                                 :name        field-name
+                                 :value       (values field-name)
+                                 :placeholder place-holder
+                                 :on-change   (fn [event]
+                                                (handle-change event)
+                                                (when global-change-handler
+                                                  (fire-server-event)))
+                                 :on-blur     handle-blur}])))
 
 (defn fork-map
   "return a map with all keys as strings, following the design suggested by Fork"
@@ -82,6 +96,15 @@
                           inputs)))]])
      (when footer
        [footer props])]))
+
+(defn form-in-container
+  "return a fork form inside a box with a border. keeps devcards dry."
+  [config validator initial-values]
+  [:div {:style {:border  "1px solid lightgrey"
+                 :padding "0 0 20px 20px"}}
+   [fork/form {:initial-values initial-values
+               :validation     validator}
+    (multi-row-form config)]])
 
 
 

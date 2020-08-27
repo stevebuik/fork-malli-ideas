@@ -3,6 +3,7 @@
             [devcards.core :refer [start-devcard-ui!]]
             [readme]
             [basics]
+            [re-frame]
             [bulma]))
 
 (enable-console-print!)
