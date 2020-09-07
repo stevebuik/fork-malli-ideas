@@ -1,8 +1,9 @@
 (ns basics
   (:require [cljs.pprint :refer [pprint]]
             [devcards.core :refer-macros [defcard defcard-rg]]
-            [core :refer [form-in-container]]
-            [app]))
+            [core :refer [form-in-container malli-transforms]]
+            [app]
+            [malli.transform :as mt]))
 
 (defcard-rg simple-validations
             (fn [re-frame-sub _]
@@ -20,7 +21,7 @@
 
                [form-in-container
                 (assoc app/form-config :header core/form-header)
-                (core/validator-for-humans app/malli-schema)
+                (core/validator-for-humans app/malli-schema malli-transforms)
                 (->> (:editing @re-frame-sub)
                      (get @re-frame-sub)
                      core/fork-map)]
@@ -37,12 +38,43 @@
 
                [form-in-container
                 app/form-config2
-                (core/validator-for-humans app/malli-schema)
+                (core/validator-for-humans app/malli-schema malli-transforms)
                 (->> (:editing @re-frame-sub)
                      (get @re-frame-sub)
                      core/fork-map)]
 
                ])
+            app/app-db
+            {:inspect-data false})
+
+(defcard-rg keyword-keys
+            (fn [re-frame-sub _]
+              [:div {:style {:margin-bottom 30}}
+
+               [:ul
+                [:li "Using the keywordize-key feature of the Fork lib"]
+                [:li "Fork form config has keywords passed but are normalised when rendered"]
+                [:li "Malli schema is the same as it always uses keywords"]
+                [:li "Malli decode/transformer only transforms form values, not names since fork returns keywords"]]
+               [:p "TODO. How to use namespaced keyword keys without losing the namespace?"]
+
+               [form-in-container
+                {:normalize-keys true                       ; inputs should normalize names
+                 :form-class     ""
+                 :inner-class    ""
+                 :header         (fn [{:keys [values]}]
+                                   [:p
+                                    [:span {:style {:font-weight :bold}} "form local state "]
+                                    [:span (str values)]])
+                 :input-rows     app/form-config3}
+                (core/validator-for-humans
+                  app/malli-schema
+                  mt/string-transformer                     ; only transform values, not keys
+                  )
+                (->> (:editing @re-frame-sub)
+                     (get @re-frame-sub))
+                ; form should populate local state using keywords. set this false to see string keys in local state
+                {:keywordize-keys true}]])
             app/app-db
             {:inspect-data false})
 
@@ -72,7 +104,7 @@
                                                                 :touched #{}})
                                                         (swap! app/app-db assoc :editing :record1))}
                                     "Load Lucio"]])})
-                (core/validator-for-humans app/malli-schema)
+                (core/validator-for-humans app/malli-schema malli-transforms)
                 (->> (:editing @re-frame-sub)
                      (get @re-frame-sub)
                      core/fork-map)]])

@@ -54,3 +54,19 @@
                                             :label        "Github followers"}]
                                   :class  ""}]})
 
+(def form-config3 [{:inputs [{:type         "text"
+                              :field-name   :name           ; keyword keys
+                              :place-holder "Enter name"
+                              :label        "Name"}]
+                    :class  ""}
+                   {:inputs [{:type         "number"
+                              :field-name   :github-followers
+                              :place-holder "Enter follower count"
+                              :label        "Github followers"}]
+                    :class  ""}
+                   {:inputs [{:type         "text"
+                              :field-name   :location
+                              :place-holder "Enter location"
+                              :label        "Location"}]
+                    :class  ""}])
+

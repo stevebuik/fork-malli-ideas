@@ -39,7 +39,7 @@
                 [:span " (currently only works on localhost)"]]
 
                [form-in-container
-                (core/validator-for-humans app/malli-schema)
+                (core/validator-for-humans app/malli-schema core/malli-transforms)
                 (get @re-frame-sub (:editing @re-frame-sub))]
 
                (app/questions "bulma"

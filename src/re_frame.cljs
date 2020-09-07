@@ -1,7 +1,7 @@
 (ns re-frame
   (:require [cljs.pprint :refer [pprint]]
             [devcards.core :refer-macros [defcard defcard-rg]]
-            [core :refer [form-in-container]]
+            [core :refer [form-in-container malli-transforms]]
             [app]
             [re-frame.core :as rf]
             [malli.core :as m]))
@@ -56,7 +56,7 @@
                                   :touched #{}}))
 
                         [:p (values "name")])}
-        (core/validator-for-humans app/malli-schema)
+        (core/validator-for-humans app/malli-schema malli-transforms)
         (core/fork-map subscribed-person)]
 
        ; external re-frame controls causing sub changes to flow into the fork form

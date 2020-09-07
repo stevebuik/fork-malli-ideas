@@ -12,12 +12,12 @@
 
 (defn validator-for-humans
   "HOF returning a Fork compatible validation fn from a schema."
-  [schema]
-  (fn [v]
-    (let [; pre-compile schema for best performance
-          explain (m/explainer schema)]
-      (->> (m/decode schema v malli-transforms)             ; coerce using transforms above
-           ; validate using keyword based schema
+  [schema transforms]
+  ; pre-compile schema for best performance
+  (let [explain (m/explainer schema)]
+    (fn [v]
+      (->> (m/decode schema v transforms)
+           ; validate the values map
            explain
            ; return a map of error messages suitable for human UIs
            me/humanize))))
@@ -34,13 +34,15 @@
 
 (defn fork-input
   "return a form input, dispatching on the type value in the config arg"
-  [{:keys [values handle-change handle-blur send-server-request]}
-   {:keys [type field-name place-holder global-change-handler]}]
+  [{:keys [values normalize-name handle-change handle-blur send-server-request]}
+   {:keys [type field-name normalize-keys place-holder global-change-handler]}]
   (case type
     ("text" "number") [:input {:id          field-name
                                :type        type
                                :class       ""
-                               :name        field-name
+                               :name        (if normalize-keys
+                                              (normalize-name field-name)
+                                              field-name)
                                :value       (values field-name)
                                :placeholder place-holder
                                :on-change   (fn [event]
@@ -96,12 +98,14 @@
 
 (defn form-in-container
   "return a fork form inside a box with a border. keeps devcards dry."
-  [config validator initial-values]
-  [:div {:style {:border  "1px solid lightgrey"
-                 :padding "0 0 20px 20px"}}
-   [fork/form {:initial-values initial-values
-               :validation     validator}
-    (multi-row-form config)]])
+  ([config validator initial-values] (form-in-container config validator initial-values {}))
+  ([config validator initial-values opts]
+   [:div {:style {:border  "1px solid lightgrey"
+                  :padding "0 0 20px 20px"}}
+    [fork/form (merge {:initial-values initial-values
+                       :validation     validator}
+                      opts)
+     (multi-row-form config)]]))
 
 
 
